@@ -20,8 +20,23 @@ class ResultActivity : AppCompatActivity() {
 
         val btnProfile: ImageButton = findViewById(R.id.btnProfile)
         btnProfile.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, ProfileActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+        }
+        val btnHome: ImageButton = findViewById(R.id.btnHome)
+        btnHome.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java )
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+        }
+        val btnReload: ImageButton = findViewById(R.id.btnReload)
+        btnReload.setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+        }
+        val btnSettings: ImageButton = findViewById(R.id.btnSettings)
+        btnSettings.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
 
 
@@ -34,6 +49,10 @@ class ResultActivity : AppCompatActivity() {
         if (photoPath != null) {
             val bitmap = BitmapFactory.decodeFile(photoPath)
             imgCaptured.setImageBitmap(bitmap)
+        }
+        else {
+            //Use dummy
+            imgCaptured.setImageResource(R.mipmap.ic_launcher)
         }
 
         // TODO: implement text narration, highlighting words, play button, rewind

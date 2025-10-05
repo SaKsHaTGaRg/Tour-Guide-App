@@ -13,13 +13,6 @@ class ReloadActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reload)
 
-        val btnProfile: ImageButton = findViewById(R.id.btnProfile)
-        btnProfile.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
-        }
-
-
         // Get photo path from MainActivity
         val photoPath = intent.getStringExtra(MainActivity.EXTRA_PHOTO_PATH)
 

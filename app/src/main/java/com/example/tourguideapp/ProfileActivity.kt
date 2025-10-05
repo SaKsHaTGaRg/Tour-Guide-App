@@ -43,15 +43,18 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         btnHome.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
 
         btnReload.setOnClickListener {
-            startActivity(Intent(this, ReloadActivity::class.java))
+            startActivity(Intent(this, HistoryActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
 
         btnSettings.setOnClickListener {
-            // TODO: Open SettingsActivity if implemented
+            startActivity(Intent(this, SettingsActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
     }
 
