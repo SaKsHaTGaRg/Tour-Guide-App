@@ -2,6 +2,7 @@ package com.example.tourguideapp
 
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.Image
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
@@ -22,6 +23,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnTakePhoto: Button
     private lateinit var imgPreview: ImageView
 
+    private lateinit var btnHome: ImageButton
+    private lateinit var btnReload: ImageButton
+    private lateinit var btnSettings: ImageButton
+
     private var imageCapture: ImageCapture? = null
     private val CAMERA_PERMISSION_CODE = 101
 
@@ -39,8 +44,21 @@ class MainActivity : AppCompatActivity() {
 
         val btnProfile: ImageButton = findViewById(R.id.btnProfile)
         btnProfile.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, ProfileActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+        }
+        val btnHome: ImageButton = findViewById(R.id.btnHome)
+        btnHome.setOnClickListener {
+        //Do nothing
+        }
+        val btnReload: ImageButton = findViewById(R.id.btnReload)
+        btnReload.setOnClickListener {
+        //History tab
+        }
+        val btnSettings: ImageButton = findViewById(R.id.btnSettings)
+        btnSettings.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
 
 

@@ -20,8 +20,22 @@ class ResultActivity : AppCompatActivity() {
 
         val btnProfile: ImageButton = findViewById(R.id.btnProfile)
         btnProfile.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, ProfileActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+        }
+        val btnHome: ImageButton = findViewById(R.id.btnHome)
+        btnHome.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java )
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+        }
+        val btnReload: ImageButton = findViewById(R.id.btnReload)
+        btnReload.setOnClickListener {
+            //History tab
+        }
+        val btnSettings: ImageButton = findViewById(R.id.btnSettings)
+        btnSettings.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
 
 

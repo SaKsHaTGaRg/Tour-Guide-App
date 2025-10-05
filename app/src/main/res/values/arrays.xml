@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="measurement_opt">
+        <item>Metric</item>
+        <item>Imperial</item>
+    </string-array>
+    <string-array name="download_opt">
+        <item>Never auto-download</item>
+        <item>Wi-Fi only</item>
+        <item>Wi-Fi &amp; mobile data</item>
+        <item>Ask every time</item>
+    </string-array>
+    <string-array name="font_sizes">
+        <item>12</item>
+        <item>14</item>
+        <item>16 (default)</item>
+        <item>18</item>
+        <item>20</item>
+        <item>22</item>
+    </string-array>
+</resources>
