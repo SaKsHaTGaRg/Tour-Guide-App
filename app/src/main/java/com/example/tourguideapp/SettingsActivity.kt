@@ -42,7 +42,8 @@ class SettingsActivity : AppCompatActivity() {
             )
         }
         btnReload.setOnClickListener {
-            //History activity implementation
+            startActivity(Intent(this, HistoryActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
         btnSettings.setOnClickListener {
             //Do nothing

@@ -48,7 +48,8 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         btnReload.setOnClickListener {
-            //History tab
+            startActivity(Intent(this, HistoryActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
 
         btnSettings.setOnClickListener {

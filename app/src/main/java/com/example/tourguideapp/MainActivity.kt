@@ -53,7 +53,8 @@ class MainActivity : AppCompatActivity() {
         }
         val btnReload: ImageButton = findViewById(R.id.btnReload)
         btnReload.setOnClickListener {
-        //History tab
+            startActivity(Intent(this, HistoryActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
         val btnSettings: ImageButton = findViewById(R.id.btnSettings)
         btnSettings.setOnClickListener {
