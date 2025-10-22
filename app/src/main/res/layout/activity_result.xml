@@ -2,9 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#FFFFFF">
+    android:background="#F5F5F7">
 
     <!-- Top bar -->
     <LinearLayout
@@ -12,7 +13,10 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:background="#6200EE"
+        android:paddingVertical="12dp"
+        android:elevation="4dp">
 
         <ImageView
             android:id="@+id/logo"
@@ -27,17 +31,36 @@
             android:text="TourGuideApp"
             android:textSize="20sp"
             android:paddingStart="10dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"/>
     </LinearLayout>
 
     <!-- Captured Image -->
     <ImageView
         android:id="@+id/imgCaptured"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
-        android:contentDescription="Captured photo"/>
+        android:background="#E0E0E0"
+        android:contentDescription="Captured photo"
+        android:elevation="4dp"
+        android:clipToOutline="true"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- AI Narration Button -->
+    <ImageButton
+        android:id="@+id/btnNarration"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/circle_button_bg"
+        android:src="@drawable/ic_music"
+        android:contentDescription="Narrate description"
+        android:layout_marginBottom="8dp"
+        android:scaleType="centerInside"/>
+
+
 
     <!-- Scrollable Text -->
     <ScrollView
@@ -46,65 +69,28 @@
         android:layout_weight="1"
         android:scrollbars="vertical"
         android:fadeScrollbars="false"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:background="#FFFFFF"
+        android:elevation="2dp"
+        android:padding="12dp">
 
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:textColor="#000000"
-            android:padding="8dp"
+            android:textColor="#333333"
+            android:lineSpacingExtra="4dp"
+            android:textStyle="normal"
             android:scrollbars="vertical"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.
-Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.
-Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
-Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat.
-Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.
-Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.
-Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales.
-Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum.
-Maecenas adipiscing ante non diam sodales hendrerit.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.
-Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.
-Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
-Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat.
-Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.
-Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.
-Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales.
-Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum.
-Maecenas adipiscing ante non diam sodales hendrerit.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.
-Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.
-Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
-Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat.
-Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.
-Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.
-Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales.
-Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum.
-Maecenas adipiscing ante non diam sodales hendrerit.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.
-Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.
-Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
-Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat.
-Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.
-Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.
-Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales.
-Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum.
-Maecenas adipiscing ante non diam sodales hendrerit.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.
-Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.
-Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
-Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat.
-Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.
-Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.
-Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales.
-Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum.
-Maecenas adipiscing ante non diam sodales hendrerit." />
-
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+        nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+        reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+        deserunt mollit anim id est laborum." />
     </ScrollView>
-
 
     <!-- Back arrow button -->
     <ImageButton
@@ -115,6 +101,7 @@ Maecenas adipiscing ante non diam sodales hendrerit." />
         android:contentDescription="Back to narration"
         android:layout_gravity="center_horizontal"
         android:background="@null"
+        app:tint="#6200EE"
         android:layout_marginTop="8dp"/>
 
     <!-- Bottom Navigation -->
@@ -123,8 +110,10 @@ Maecenas adipiscing ante non diam sodales hendrerit." />
         android:layout_height="60dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="#EEEEEE"
-        android:weightSum="4">
+        android:background="#FFFFFF"
+        android:elevation="4dp"
+        android:weightSum="4"
+        android:paddingHorizontal="8dp">
 
         <ImageButton
             android:id="@+id/btnProfile"
