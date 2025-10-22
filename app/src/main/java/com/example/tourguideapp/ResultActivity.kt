@@ -55,8 +55,6 @@ class ResultActivity : AppCompatActivity() {
             imgCaptured.setImageResource(R.mipmap.ic_launcher)
         }
 
-        // TODO: implement text narration, highlighting words, play button, rewind
-
         btnBackToNarration.setOnClickListener {
             // Scroll back to top
             tvDescription.scrollTo(0,0)
