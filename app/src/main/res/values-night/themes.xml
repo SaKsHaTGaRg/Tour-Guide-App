@@ -1,7 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Tourguideapp" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.TourGuideApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
+    <style name="Theme.TourGuideApp.Colorblind">
+        <!-- Slightly lighter primaries for dark backgrounds -->
+        <item name="colorPrimary">#7CB9FF</item>
+        <item name="colorOnPrimary">#001423</item>
+        <item name="colorPrimaryContainer">#0E2B45</item>
+
+        <item name="colorSecondary">#FFDD6A</item>
+        <item name="colorOnSecondary">#1A1400</item>
+        <item name="colorSecondaryContainer">#3A2F00</item>
+
+        <item name="colorSurface">#0B0B0B</item>
+        <item name="colorOnSurface">#FFFFFF</item>
+        <item name="colorSurfaceVariant">#1A1C1E</item>
+        <item name="colorOutlineVariant">#3A3F45</item>
     </style>
 </resources>

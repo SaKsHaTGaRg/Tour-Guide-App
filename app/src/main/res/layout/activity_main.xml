@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:background="@drawable/bg_gradient"
+    android:background="?attr/colorSurface"
     android:padding="20dp">
 
     <!-- ===== Top Bar ===== -->
@@ -30,7 +31,7 @@
             android:text="Tour Guide App"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnSurface"
             android:shadowColor="#55000000"
             android:shadowDx="1"
             android:shadowDy="2"
@@ -76,8 +77,8 @@
             android:text="📸 Take Photo"
             android:textAllCaps="false"
             android:textSize="16sp"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/btn_gradient_primary" />
+            android:textColor="?attr/colorOnPrimary"
+            android:backgroundTint="?attr/colorPrimary" />
 
         <Button
             android:id="@+id/btnUploadPhoto"
@@ -86,8 +87,8 @@
             android:text="⬆️ Upload Photo"
             android:textAllCaps="false"
             android:textSize="16sp"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/btn_gradient_secondary"
+            android:textColor="?attr/colorOnPrimary"
+            android:backgroundTint="?attr/colorPrimary"
             android:layout_marginTop="12dp" />
     </LinearLayout>
 
@@ -97,15 +98,13 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- ===== Bottom Navigation ===== -->
+    <!-- Bottom navigation -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="60dp"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:background="#F9F9F9"
-        android:elevation="8dp"
-        android:paddingHorizontal="16dp"
+        android:gravity="center_vertical"
+        android:background="#EEEEEE"
         android:weightSum="4">
 
         <ImageButton
@@ -114,9 +113,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/ic_profile"
-            android:tint="#2D2D2D"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="10dp" />
+            android:contentDescription="Profile"
+            android:background="@null"/>
 
         <ImageButton
             android:id="@+id/btnHome"
@@ -124,9 +122,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/ic_home"
-            android:tint="#2D2D2D"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="10dp" />
+            android:contentDescription="Home"
+            android:background="@null"/>
 
         <ImageButton
             android:id="@+id/btnReload"
@@ -134,9 +131,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/ic_reload"
-            android:tint="#2D2D2D"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="10dp" />
+            android:contentDescription="Reload"
+            android:background="@null"/>
 
         <ImageButton
             android:id="@+id/btnSettings"
@@ -144,8 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/ic_settings"
-            android:tint="#2D2D2D"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="10dp" />
+            android:contentDescription="Settings"
+            android:background="@null"/>
     </LinearLayout>
 </LinearLayout>

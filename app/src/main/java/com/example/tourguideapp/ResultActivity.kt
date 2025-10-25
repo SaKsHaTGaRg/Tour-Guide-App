@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
-class ResultActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var imgCaptured: ImageView
     private lateinit var tvDescription: TextView
