@@ -7,7 +7,7 @@ import android.os.Looper
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 
-class ReloadActivity : AppCompatActivity() {
+class ReloadActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

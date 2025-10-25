@@ -14,17 +14,12 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/travelmate"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Tourguideapp">
+        android:theme="@style/Theme.TourGuideApp">
         <activity
             android:name=".HistoryActivity"
             android:exported="false"
             android:label="@string/title_activity_history"
-            android:theme="@style/Theme.Tourguideapp" />
-        <activity
-            android:name=".MainActivity2"
-            android:exported="false"
-            android:label="@string/title_activity_main2"
-            android:theme="@style/Theme.Tourguideapp" />
+            android:theme="@style/Theme.TourGuideApp" />
         <activity
             android:name=".SettingsActivity"
             android:exported="false" />

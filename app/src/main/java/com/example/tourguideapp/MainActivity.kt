@@ -18,7 +18,7 @@ import androidx.core.content.ContextCompat
 import java.io.File
 import kotlin.random.Random
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var cameraPreview: PreviewView
     private lateinit var btnTakePhoto: Button
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
 
         // --- Camera setup ---
         if (allPermissionsGranted()) {
-            startCamera()
+            cameraPreview.post { startCamera() }
         } else {
             requestPermissions(arrayOf(android.Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
         }
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
             grantResults.isNotEmpty() &&
             grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED
         ) {
-            startCamera()
+            cameraPreview.post { startCamera() }
         }
     }
 

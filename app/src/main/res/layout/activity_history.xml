@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="?attr/colorSurface"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -61,7 +61,7 @@
             <LinearLayout
                 android:id="@+id/itemCasaLomaHistory"
                 android:orientation="horizontal"
-                android:background="#FFFFFF"
+                android:background="?attr/colorSurface"
                 android:padding="10dp"
                 android:layout_marginBottom="8dp"
                 android:elevation="3dp"
@@ -117,7 +117,7 @@
             <LinearLayout
                 android:id="@+id/itemCasaLomaFolklore"
                 android:orientation="horizontal"
-                android:background="#FFFFFF"
+                android:background="?attr/colorSurface"
                 android:padding="10dp"
                 android:layout_marginBottom="8dp"
                 android:elevation="3dp"
@@ -172,7 +172,7 @@
             <LinearLayout
                 android:id="@+id/itemGeorgeBrown"
                 android:orientation="horizontal"
-                android:background="#FFFFFF"
+                android:background="?attr/colorSurface"
                 android:padding="10dp"
                 android:layout_marginBottom="8dp"
                 android:elevation="3dp"
@@ -227,7 +227,7 @@
             <LinearLayout
                 android:id="@+id/itemBigBen"
                 android:orientation="horizontal"
-                android:background="#FFFFFF"
+                android:background="?attr/colorSurface"
                 android:padding="10dp"
                 android:elevation="3dp"
                 android:layout_width="match_parent"
