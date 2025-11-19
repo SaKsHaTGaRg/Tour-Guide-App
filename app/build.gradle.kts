@@ -15,9 +15,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        buildConfigField("String", "OPENAI_API_KEY", "\"${project.properties["OPENAI_API_KEY"]}\"")
+
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -39,18 +41,19 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true// optional but useful
+        buildConfig = true
     }
 }
 
 dependencies {
 
 
-    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    // 🔥 CORRECT VERSIONS — KEEP THESE EXACTLY
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
-    implementation("com.squareup.okhttp3:okhttp:5.3.2")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
     // Core AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
