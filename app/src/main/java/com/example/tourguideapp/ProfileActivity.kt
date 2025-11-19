@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.tourguideapp.ReloadActivity
 
 class ProfileActivity : AppCompatActivity() {
 

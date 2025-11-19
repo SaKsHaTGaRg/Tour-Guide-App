@@ -3,6 +3,7 @@
     package="com.example.tourguideapp">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -19,11 +20,6 @@
             android:name=".HistoryActivity"
             android:exported="false"
             android:label="@string/title_activity_history"
-            android:theme="@style/Theme.Tourguideapp" />
-        <activity
-            android:name=".MainActivity2"
-            android:exported="false"
-            android:label="@string/title_activity_main2"
             android:theme="@style/Theme.Tourguideapp" />
         <activity
             android:name=".SettingsActivity"

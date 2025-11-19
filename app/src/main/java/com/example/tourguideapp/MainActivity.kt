@@ -1,8 +1,10 @@
 package com.example.tourguideapp
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -15,7 +17,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
-import com.example.tourguideapp.ui.theme.ReloadActivity
+import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.random.Random
 
@@ -27,11 +29,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imgPreview: ImageView
 
     private var imageCapture: ImageCapture? = null
-    private val CAMERA_PERMISSION_CODE = 101
-
-    companion object {
-        const val EXTRA_PHOTO_PATH = "photo_path"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,53 +39,25 @@ class MainActivity : AppCompatActivity() {
         btnUploadPhoto = findViewById(R.id.btnUploadPhoto)
         imgPreview = findViewById(R.id.imgPreview)
 
-        // --- Bottom navigation ---
-        findViewById<ImageButton>(R.id.btnProfile).setOnClickListener {
-            startActivity(Intent(this, ProfileActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-        }
-        findViewById<ImageButton>(R.id.btnHome).setOnClickListener { /* stay here */ }
-        findViewById<ImageButton>(R.id.btnReload).setOnClickListener {
-            startActivity(Intent(this, HistoryActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-        }
-        findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-        }
+        setupNav()
+        startCamera()
 
-        // --- Camera setup ---
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
-            requestPermissions(arrayOf(android.Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
-        }
+        btnTakePhoto.setOnClickListener { takePhoto() }
 
-        // --- Buttons ---
-        btnTakePhoto.setOnClickListener {
-            takePhoto()
-        }
 
-        btnUploadPhoto.setOnClickListener {
-            simulateUploadPhoto()
-        }
+        btnUploadPhoto.setOnClickListener { uploadDummyPhoto() }
     }
 
-    private fun allPermissionsGranted() =
-        ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) ==
-                android.content.pm.PackageManager.PERMISSION_GRANTED
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_CODE &&
-            grantResults.isNotEmpty() &&
-            grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED
-        ) {
-            startCamera()
+    private fun setupNav() {
+        findViewById<ImageButton>(R.id.btnProfile).setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
+        findViewById<ImageButton>(R.id.btnHome).setOnClickListener {}
+        findViewById<ImageButton>(R.id.btnReload).setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
+        }
+        findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
 
@@ -97,75 +66,75 @@ class MainActivity : AppCompatActivity() {
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
 
-            val preview = Preview.Builder()
-                .build()
-                .also { it.setSurfaceProvider(cameraPreview.surfaceProvider) }
+            val preview = Preview.Builder().build()
+            preview.setSurfaceProvider(cameraPreview.surfaceProvider)
 
-            imageCapture = ImageCapture.Builder()
-                .setTargetRotation(cameraPreview.display.rotation)
-                .build()
+            imageCapture = ImageCapture.Builder().build()
 
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            cameraProvider.unbindAll()
+            cameraProvider.bindToLifecycle(
+                this,
+                CameraSelector.DEFAULT_BACK_CAMERA,
+                preview,
+                imageCapture
+            )
         }, ContextCompat.getMainExecutor(this))
     }
 
     private fun takePhoto() {
-        val imageCapture = imageCapture ?: return
-        val photoFile = File(externalCacheDir, "photo_${System.currentTimeMillis()}.jpg")
+        val outputFile = File(externalCacheDir, "${System.currentTimeMillis()}.jpg")
+        val opts = ImageCapture.OutputFileOptions.Builder(outputFile).build()
 
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
-
-        imageCapture.takePicture(
-            outputOptions,
+        imageCapture?.takePicture(
+            opts,
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exception: ImageCaptureException) {
                     exception.printStackTrace()
                 }
 
-                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+                override fun onImageSaved(result: ImageCapture.OutputFileResults) {
+
+                    val bitmap = BitmapFactory.decodeFile(outputFile.absolutePath)
+
+                    val stream = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream)
+                    val compressedBytes = stream.toByteArray()
+
+                    val base64 = Base64.encodeToString(compressedBytes, Base64.NO_WRAP)
+
                     imgPreview.setImageBitmap(bitmap)
 
-                    // Go to reload activity
                     val intent = Intent(this@MainActivity, ReloadActivity::class.java)
-                    intent.putExtra(EXTRA_PHOTO_PATH, photoFile.absolutePath)
+                    intent.putExtra("image_base64", base64)
                     startActivity(intent)
                 }
             }
         )
     }
 
-    private fun simulateUploadPhoto() {
-        // Hide camera preview (to make UI cleaner)
-        cameraPreview.visibility = View.GONE
-        btnTakePhoto.visibility = View.GONE
+    // ⭐ RESTORED UPLOAD FEATURE
+    private fun uploadDummyPhoto() {
 
-        // Randomly choose between dummy images
-        val dummyImages = listOf(R.drawable.dummy1, R.drawable.dummy2)
-        val selectedImage = dummyImages[Random.nextInt(dummyImages.size)]
+        val dummyImages = listOf(
+            R.drawable.dummy1,
+            R.drawable.dummy2
+        )
 
-        // Show dummy image as preview
-        imgPreview.setImageResource(selectedImage)
+        val selected = dummyImages[Random.nextInt(dummyImages.size)]
 
-        // Go to reload activity
+        val bitmap = BitmapFactory.decodeResource(resources, selected)
+
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream)
+        val compressedBytes = stream.toByteArray()
+
+        val base64 = Base64.encodeToString(compressedBytes, Base64.NO_WRAP)
+
+        imgPreview.setImageBitmap(bitmap)
+
         val intent = Intent(this, ReloadActivity::class.java)
-        intent.putExtra(EXTRA_PHOTO_PATH, "drawable:$selectedImage")
+        intent.putExtra("image_base64", base64)
         startActivity(intent)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // Reset layout to normal when coming back from result
-        cameraPreview.visibility = View.VISIBLE
-        btnTakePhoto.visibility = View.VISIBLE
-        imgPreview.setImageDrawable(null)
     }
 }
