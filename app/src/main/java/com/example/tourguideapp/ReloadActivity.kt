@@ -5,9 +5,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class ReloadActivity : BaseActivity() {
+
+    private val backend = Backend()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,15 +19,35 @@ class ReloadActivity : BaseActivity() {
         // Get photo path from MainActivity
         val photoPath = intent.getStringExtra(MainActivity.EXTRA_PHOTO_PATH)
 
-        // Simulate 3-second processing
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Open ResultActivity and pass photo path
-            val intent = Intent(this, ResultActivity::class.java)
-            intent.putExtra("photo_path", photoPath)
-            startActivity(intent)
-
-            // Finish reload so user can't go back here
+        if (photoPath == null) {
+            Toast.makeText(this, "No image found", Toast.LENGTH_SHORT).show()
             finish()
-        }, 3000)
+            return
+        }
+        analyzeImage(photoPath)
+
+        // Simulate 2-second processing
+        Handler(Looper.getMainLooper()).postDelayed({
+            analyzeImage(photoPath)
+        }, 2000)
+    }
+
+    private fun analyzeImage(photoPath: String) {
+
+        backend.uploadImageToBackend(photoPath) { landmarkName ->
+            runOnUiThread {
+                if (landmarkName == null) {
+                    Toast.makeText(this, "Backend error", Toast.LENGTH_LONG).show()
+                    finish()
+                    return@runOnUiThread
+                }
+                val intent = Intent(this, ResultActivity::class.java)
+                intent.putExtra("photo_path", photoPath)
+                intent.putExtra("landmark_name", landmarkName)
+                startActivity(intent)
+
+                finish()
+            }
+        }
     }
 }
