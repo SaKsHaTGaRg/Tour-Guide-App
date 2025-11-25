@@ -3,24 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="?attr/colorSurface"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".HistoryActivity">
 
-    <!-- Top bar: logo + app name -->
+    <!-- top bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="8dp">
+        android:padding="12dp"
+        android:background="?attr/colorSurface"
+        android:elevation="4dp">
 
         <ImageView
             android:id="@+id/logo"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/travelmate" />
+            android:src="@drawable/travelmate"
+            android:contentDescription="App logo" />
 
         <TextView
             android:id="@+id/TourGuideApp"
@@ -28,8 +31,9 @@
             android:layout_height="wrap_content"
             android:text="TourGuideApp"
             android:textSize="20sp"
-            android:paddingStart="10dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface"
+            android:paddingStart="10dp" />
     </LinearLayout>
 
     <!-- title -->
@@ -40,255 +44,341 @@
         android:textSize="22sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:padding="16dp" />
+        android:padding="16dp"
+        android:textColor="?attr/colorOnSurface" />
 
+    <!-- list -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:scrollbars="vertical"
         android:fadeScrollbars="false"
-        android:scrollbarSize="2dp"
-        android:scrollbarThumbVertical="@android:color/darker_gray">
+        android:paddingHorizontal="12dp"
+        android:clipToPadding="false">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp">
+            android:layout_height="wrap_content">
 
-            <!-- casa loma 1 -->
-            <LinearLayout
+            <!--CASA LOMA HISTORY-->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/itemCasaLomaHistory"
-                android:orientation="horizontal"
-                android:background="#FFFFFF"
-                android:padding="10dp"
-                android:layout_marginBottom="8dp"
-                android:elevation="3dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginEnd="10dp"
-                    android:src="@mipmap/ic_launcher" />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Casa Loma: History"
-                        android:textStyle="bold"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="In-Depth  |  Date: 05.10.2025"
-                        android:textSize="13sp" />
-                </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/colorSurfaceVariant"
+                app:strokeColor="?attr/colorOutlineVariant"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                    android:padding="10dp"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <ImageButton
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@android:drawable/ic_media_play"
-                        android:background="@null" />
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginEnd="12dp"
+                        android:src="@mipmap/ic_launcher"
+                        android:contentDescription="Item image" />
 
-                    <ImageButton
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@android:drawable/ic_menu_upload"
-                        android:background="@null" />
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Casa Loma: History"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:text="In-Depth  |  Date: 05.10.2025"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageButton
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_media_play"
+                            app:tint="?attr/colorOnSurface"
+                            android:elevation="2dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Play" />
+
+                        <ImageButton
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_menu_upload"
+                            app:tint="?attr/colorOnSurfaceVariant"
+                            android:elevation="2dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Share" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- casa loma -->
-            <LinearLayout
+            <!-- CASA LOMA FOLKLORE -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/itemCasaLomaFolklore"
-                android:orientation="horizontal"
-                android:background="#FFFFFF"
-                android:padding="10dp"
-                android:layout_marginBottom="8dp"
-                android:elevation="3dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginEnd="10dp"
-                    android:src="@mipmap/ic_launcher" />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Casa Loma: Folklore"
-                        android:textStyle="bold"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Short Overview  |  Date: 05.10.2025"
-                        android:textSize="13sp" />
-                </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/colorSurfaceVariant"
+                app:strokeColor="?attr/colorOutlineVariant"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                    android:padding="10dp"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <ImageButton
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@android:drawable/ic_media_play"
-                        android:background="@null" />
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginEnd="12dp"
+                        android:src="@mipmap/ic_launcher"
+                        android:contentDescription="Item image" />
 
-                    <ImageButton
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@android:drawable/ic_menu_upload"
-                        android:background="@null" />
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Casa Loma: Folklore"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:text="Short Overview  |  Date: 05.10.2025"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageButton
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_media_play"
+                            app:tint="?attr/colorOnSurface"
+                            android:elevation="2dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Play" />
+
+                        <ImageButton
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_menu_upload"
+                            app:tint="?attr/colorOnSurfaceVariant"
+                            android:elevation="2dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Share" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
+            <!--GEORGE BROWN-->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/itemGeorgeBrown"
-                android:orientation="horizontal"
-                android:background="#FFFFFF"
-                android:padding="10dp"
-                android:layout_marginBottom="8dp"
-                android:elevation="3dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginEnd="10dp"
-                    android:src="@mipmap/ic_launcher" />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="George Brown College: History"
-                        android:textStyle="bold"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Standard  |  Date: 05.10.2025"
-                        android:textSize="13sp" />
-                </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/colorSurfaceVariant"
+                app:strokeColor="?attr/colorOutlineVariant"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                    android:padding="10dp"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <ImageButton
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@android:drawable/ic_media_play"
-                        android:background="@null" />
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginEnd="12dp"
+                        android:src="@mipmap/ic_launcher"
+                        android:contentDescription="Item image" />
 
-                    <ImageButton
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@android:drawable/ic_menu_upload"
-                        android:background="@null" />
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="George Brown College: History"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:text="Standard  |  Date: 05.10.2025"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageButton
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_media_play"
+                            app:tint="?attr/colorOnSurface"
+                            android:elevation="2dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Play" />
+
+                        <ImageButton
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_menu_upload"
+                            app:tint="?attr/colorOnSurfaceVariant"
+                            android:elevation="2dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Share" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
+            <!--BIG BEN-->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/itemBigBen"
-                android:orientation="horizontal"
-                android:background="#FFFFFF"
-                android:padding="10dp"
-                android:elevation="3dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginEnd="10dp"
-                    android:src="@mipmap/ic_launcher" />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Big Ben: History"
-                        android:textStyle="bold"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Standard  |  Date: 05.10.2025"
-                        android:textSize="13sp" />
-                </LinearLayout>
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/colorSurfaceVariant"
+                app:strokeColor="?attr/colorOutlineVariant"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                    android:padding="10dp"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <ImageButton
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@android:drawable/ic_media_play"
-                        android:background="@null" />
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginEnd="12dp"
+                        android:src="@mipmap/ic_launcher"
+                        android:contentDescription="Item image" />
 
-                    <ImageButton
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@android:drawable/ic_menu_upload"
-                        android:background="@null" />
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Big Ben: History"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:text="Standard  |  Date: 05.10.2025"
+                            android:textSize="13sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageButton
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_media_play"
+                            app:tint="?attr/colorOnSurface"
+                            android:elevation="2dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Play" />
+
+                        <ImageButton
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_menu_upload"
+                            app:tint="?attr/colorOnSurfaceVariant"
+                            android:elevation="2dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Share" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom navigation -->
+    <!-- bottom nav -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="#EEEEEE"
-        android:weightSum="4">
+        android:background="?attr/colorSurface"
+        android:weightSum="4"
+        android:elevation="8dp"
+        android:paddingHorizontal="8dp"
+        android:divider="?android:attr/listDivider"
+        android:showDividers="middle">
 
         <ImageButton
             android:id="@+id/btnProfile"
@@ -296,8 +386,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/ic_profile"
+            app:tint="?attr/colorOnSurface"
+            android:elevation="2dp"
             android:contentDescription="Profile"
-            android:background="@null"/>
+            android:background="?attr/selectableItemBackgroundBorderless"/>
 
         <ImageButton
             android:id="@+id/btnHome"
@@ -305,8 +397,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/ic_home"
+            app:tint="?attr/colorOnSurface"
+            android:elevation="2dp"
             android:contentDescription="Home"
-            android:background="@null"/>
+            android:background="?attr/selectableItemBackgroundBorderless"/>
 
         <ImageButton
             android:id="@+id/btnReload"
@@ -314,8 +408,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/ic_reload"
+            app:tint="?attr/colorOnSurface"
+            android:elevation="2dp"
             android:contentDescription="Reload"
-            android:background="@null"/>
+            android:background="?attr/selectableItemBackgroundBorderless"/>
 
         <ImageButton
             android:id="@+id/btnSettings"
@@ -323,8 +419,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/ic_settings"
+            app:tint="?attr/colorOnSurface"
+            android:elevation="2dp"
             android:contentDescription="Settings"
-            android:background="@null"/>
+            android:background="?attr/selectableItemBackgroundBorderless"/>
     </LinearLayout>
-
 </LinearLayout>

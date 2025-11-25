@@ -7,7 +7,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tourguideapp.ReloadActivity
 
-class ProfileActivity : AppCompatActivity() {
+class ProfileActivity : BaseActivity() {
 
     private lateinit var etUserName: EditText
     private lateinit var imgProfile: ImageView
@@ -103,17 +103,20 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         // Bottom Navigation
-        btnProfile.setOnClickListener {
-            // Stay here
+        findViewById<ImageButton>(R.id.btnProfile).setOnClickListener {
+            //Do nothing
         }
-        btnHome.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+        findViewById<ImageButton>(R.id.btnReload).setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
-        btnReload.setOnClickListener {
-            startActivity(Intent(this, ReloadActivity::class.java))
+        findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
-        btnSettings.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
+        findViewById<ImageButton>(R.id.btnHome).setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
     }
 }

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#FFFFFF">
+    android:background="?attr/colorSurface">
 
     <!-- Top bar -->
     <LinearLayout
@@ -140,18 +140,18 @@
             </LinearLayout>
 
             <Switch
-                android:id="@+id/switch1"
+                android:id="@+id/dyslexia_swt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Dyslexia-friendly font"
-                android:textSize="17sp"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp"
                 android:paddingTop="8dp"
-                android:paddingBottom="8dp"/>
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp"
+                android:text="Dyslexia-friendly font"
+                android:textSize="17sp" />
 
             <Switch
-                android:id="@+id/switch2"
+                android:id="@+id/colorblind_swt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Colorblind-friendly theme"
@@ -162,7 +162,7 @@
                 android:paddingBottom="8dp"/>
 
             <Switch
-                android:id="@+id/switch3"
+                android:id="@+id/darkmode_swt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Dark mode"

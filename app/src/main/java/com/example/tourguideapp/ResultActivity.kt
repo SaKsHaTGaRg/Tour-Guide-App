@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
-class ResultActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var imgCaptured: ImageView
     private lateinit var tvDescription: TextView
@@ -55,6 +55,11 @@ class ResultActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         // Load image
         val photoPath = intent.getStringExtra("photo_path")
+        //Load landmark name from the backend
+        val landmarkName = intent.getStringExtra("landmark_name")
+        //TODO: Add wikipedia calls + LLM customization here
+
+
         if (photoPath != null) {
             if (photoPath.startsWith("drawable:")) {
                 val resId = photoPath.substringAfter("drawable:").toInt()

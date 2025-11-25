@@ -2,96 +2,51 @@ package com.example.tourguideapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.os.Handler
+import android.os.Looper
 import android.widget.ImageButton
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.example.tourguideapp.api.RetrofitClient
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
 
-class ReloadActivity : AppCompatActivity() {
+class ReloadActivity : BaseActivity() {
 
-    private lateinit var tvStatus: TextView
-    private lateinit var progressBar: ProgressBar
+    private val backend = Backend()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reload)
 
-        tvStatus = findViewById(R.id.txtLoading)
-        progressBar = findViewById(R.id.progressBar)
+        // Get photo path from MainActivity
+        val photoPath = intent.getStringExtra(MainActivity.EXTRA_PHOTO_PATH)
 
-        setupBottomNavigation()
-
-        val imgBase64 = intent.getStringExtra("image_base64")
-        if (imgBase64 != null) {
-            analyze(imgBase64)
-        } else {
-            tvStatus.text = "No image received."
+        if (photoPath == null) {
+            Toast.makeText(this, "No image found", Toast.LENGTH_SHORT).show()
+            finish()
+            return
         }
+        analyzeImage(photoPath)
+
+        // Simulate 2-second processing
+        Handler(Looper.getMainLooper()).postDelayed({
+            analyzeImage(photoPath)
+        }, 2000)
     }
 
-    private fun setupBottomNavigation() {
-        findViewById<ImageButton>(R.id.btnProfile).setOnClickListener { finish() }
-        findViewById<ImageButton>(R.id.btnHome).setOnClickListener { finish() }
-        findViewById<ImageButton>(R.id.btnReload).setOnClickListener { }
-        findViewById<ImageButton>(R.id.btnSettings).setOnClickListener { finish() }
-    }
+    private fun analyzeImage(photoPath: String) {
 
-    private fun analyze(base64: String) {
-        lifecycleScope.launch {
-
-            progressBar.visibility = View.VISIBLE
-            tvStatus.text = "Identifying landmark..."
-
-            val json = """
-                {
-                  "model": "gpt-4o-mini",
-                  "input": [
-                    {
-                      "role": "user",
-                      "content": [
-                        {"type": "input_text", "text": "Identify this landmark."},
-                        {
-                          "type": "input_image",
-                          "image_url": "data:image/jpeg;base64,$base64"
-                        }
-                      ]
-                    }
-                  ]
+        backend.uploadImageToBackend(photoPath) { landmarkName ->
+            runOnUiThread {
+                if (landmarkName == null) {
+                    Toast.makeText(this, "Backend error", Toast.LENGTH_LONG).show()
+                    finish()
+                    return@runOnUiThread
                 }
-            """.trimIndent()
-
-            val body = json.toRequestBody("application/json".toMediaType())
-
-            try {
-                val response = withContext(Dispatchers.IO) {
-                    RetrofitClient.openAIService.analyzeImage(body)
-                }
-
-                val resStr = response.string()
-                val jsonObj = JSONObject(resStr)
-
-                val output = jsonObj
-                    .getJSONArray("output")
-                    .getJSONObject(0)
-                    .getString("content")
-
-                val intent = Intent(this@ReloadActivity, ResultActivity::class.java)
-                intent.putExtra("landmarkName", output)
+                val intent = Intent(this, ResultActivity::class.java)
+                intent.putExtra("photo_path", photoPath)
+                intent.putExtra("landmark_name", landmarkName)
                 startActivity(intent)
 
-            } catch (e: Exception) {
-                tvStatus.text = "Error: ${e.message}"
-            } finally {
-                progressBar.visibility = View.GONE
+                finish()
             }
         }
     }
