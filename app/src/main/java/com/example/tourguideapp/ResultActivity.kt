@@ -55,6 +55,11 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
 
         // Load image
         val photoPath = intent.getStringExtra("photo_path")
+        //Load landmark name from the backend
+        val landmarkName = intent.getStringExtra("landmark_name")
+        //TODO: Add wikipedia calls + LLM customization here
+
+
         if (photoPath != null) {
             if (photoPath.startsWith("drawable:")) {
                 val resId = photoPath.substringAfter("drawable:").toInt()

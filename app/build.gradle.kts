@@ -70,6 +70,8 @@ dependencies {
     implementation("androidx.camera:camera-view:$camerax_version")
     implementation("androidx.camera:camera-extensions:$camerax_version")
     implementation("androidx.exifinterface:exifinterface:1.3.6")
+    //http dependency
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
