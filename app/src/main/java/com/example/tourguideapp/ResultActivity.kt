@@ -7,7 +7,7 @@ import android.speech.tts.TextToSpeech
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import java.util.*
 
 class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
@@ -20,6 +20,8 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
 
     private var isSpeaking = false
     private var narrationText: String = ""
+
+    private val backend = Backend()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,31 +36,36 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
 
         // Bottom navigation
         findViewById<ImageButton>(R.id.btnProfile).setOnClickListener {
-            startActivity(Intent(this, ProfileActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+            startActivity(
+                Intent(this, ProfileActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            )
         }
 
         findViewById<ImageButton>(R.id.btnHome).setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+            startActivity(
+                Intent(this, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            )
         }
 
         findViewById<ImageButton>(R.id.btnReload).setOnClickListener {
-            startActivity(Intent(this, HistoryActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+            startActivity(
+                Intent(this, HistoryActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            )
         }
 
         findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+            startActivity(
+                Intent(this, SettingsActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            )
         }
 
         // Load image
         val photoPath = intent.getStringExtra("photo_path")
-        //Load landmark name from the backend
         val landmarkName = intent.getStringExtra("landmark_name")
-        //TODO: Add wikipedia calls + LLM customization here
-
 
         if (photoPath != null) {
             if (photoPath.startsWith("drawable:")) {
@@ -72,33 +79,53 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
             imgCaptured.setImageResource(R.mipmap.ic_launcher)
         }
 
+        if (landmarkName == null) {
+            Toast.makeText(this, "No landmark received from backend", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        // Loading text while story is generated
+        tvDescription.text = "Generating story for $landmarkName..."
+        narrationText = tvDescription.text.toString()
+
+        // --- Hardcoded preferences (can later be user-chosen) ---
+        val userStyle = "folklore"   // funny / scary / romantic / folklore etc.
+        val userTone = "casual"      // casual / formal
+        val userLength = "medium"    // short / medium / long
+
+        // --- Fetch story from backend ---
+        backend.fetchStoryFromBackend(
+            landmark = landmarkName,
+            style = userStyle,
+            tone = userTone,
+            length = userLength
+        ) { story ->
+            runOnUiThread {
+                if (story != null) {
+                    narrationText = story
+                    tvDescription.text = story
+                } else {
+                    narrationText = "Could not generate story for $landmarkName."
+                    tvDescription.text = narrationText
+                }
+            }
+        }
+
         // Scroll to top button
         btnBackToNarration.setOnClickListener {
             tvDescription.scrollTo(0, 0)
         }
 
         // AI Narration Play/Pause
-        narrationText = """
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in 
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia 
-            deserunt mollit anim id est laborum.
-        """.trimIndent()
-
-        tvDescription.text = narrationText
-
         btnNarration.setOnClickListener {
             if (isSpeaking) {
                 tts.stop()
                 isSpeaking = false
-                btnNarration.setImageResource(R.drawable.ic_play_arrow) // Play icon
+                btnNarration.setImageResource(R.drawable.ic_play_arrow)
             } else {
                 speakOut(narrationText)
                 isSpeaking = true
-                btnNarration.setImageResource(R.drawable.ic_pause) // Pause icon
+                btnNarration.setImageResource(R.drawable.ic_pause)
             }
         }
     }
@@ -106,8 +133,10 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             val result = tts.setLanguage(Locale.US)
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                // Handle unsupported language
+            if (result == TextToSpeech.LANG_MISSING_DATA ||
+                result == TextToSpeech.LANG_NOT_SUPPORTED
+            ) {
+                // Language error handling
             }
         }
     }
