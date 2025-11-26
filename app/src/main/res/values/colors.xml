@@ -2,4 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="grey_highlight">#D3D3D3</color>
+    <color name="line_highlight">#ADD8E6</color>  <!-- Light Blue -->
+
+
 </resources>

@@ -3,11 +3,18 @@ package com.example.tourguideapp
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.BackgroundColorSpan
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import java.util.*
 
 class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
@@ -20,8 +27,9 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
 
     private var isSpeaking = false
     private var narrationText: String = ""
-
     private val backend = Backend()
+
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,21 +92,21 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
             return
         }
 
-        // Loading text while story is generated
+        // Show loading text
         tvDescription.text = "Generating story for $landmarkName..."
         narrationText = tvDescription.text.toString()
 
-        // --- Hardcoded preferences (can later be user-chosen) ---
-        val userStyle = "folklore"   // funny / scary / romantic / folklore etc.
-        val userTone = "casual"      // casual / formal
-        val userLength = "medium"    // short / medium / long
+        // Hardcoded user preferences
+        val userStyle = "folklore"
+        val userTone = "casual"
+        val userLength = "medium"
 
-        // --- Fetch story from backend ---
+        // Fetch story from backend
         backend.fetchStoryFromBackend(
-            landmark = landmarkName,
-            style = userStyle,
-            tone = userTone,
-            length = userLength
+            landmarkName,
+            userStyle,
+            userTone,
+            userLength
         ) { story ->
             runOnUiThread {
                 if (story != null) {
@@ -111,38 +119,111 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
             }
         }
 
-        // Scroll to top button
         btnBackToNarration.setOnClickListener {
             tvDescription.scrollTo(0, 0)
         }
 
-        // AI Narration Play/Pause
         btnNarration.setOnClickListener {
             if (isSpeaking) {
                 tts.stop()
                 isSpeaking = false
                 btnNarration.setImageResource(R.drawable.ic_play_arrow)
             } else {
-                speakOut(narrationText)
+                speakWithHighlight(narrationText)
                 isSpeaking = true
                 btnNarration.setImageResource(R.drawable.ic_pause)
             }
         }
     }
 
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            val result = tts.setLanguage(Locale.US)
-            if (result == TextToSpeech.LANG_MISSING_DATA ||
-                result == TextToSpeech.LANG_NOT_SUPPORTED
-            ) {
-                // Language error handling
+    // ---------------- HIGHLIGHT LOGIC ----------------
+
+    private fun speakWithHighlight(text: String) {
+        val words = text.split(" ")
+        var currentIndex = 0
+
+        tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+
+            override fun onStart(utteranceId: String?) {}
+
+            override fun onDone(utteranceId: String?) {
+                handler.post {
+                    // Clear highlight when done
+                    tvDescription.text = narrationText
+                    isSpeaking = false
+                    btnNarration.setImageResource(R.drawable.ic_play_arrow)
+                }
             }
+
+            override fun onError(utteranceId: String?) {}
+
+            override fun onRangeStart(
+                utteranceId: String?,
+                start: Int,
+                end: Int,
+                frame: Int
+            ) {
+                handler.post {
+                    highlightLine(start, end)
+                }
+            }
+        })
+
+        val params = Bundle()
+        params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "tts1")
+
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, params, "tts1")
+    }
+
+    private fun highlightLine(start: Int, end: Int) {
+        try {
+            val spannable = SpannableStringBuilder(narrationText)
+
+            val highlightColor = ContextCompat.getColor(this, R.color.line_highlight)
+
+            tvDescription.post {
+                try {
+                    val layout = tvDescription.layout ?: return@post
+
+                    // Find the line that this text range belongs to
+                    val line = layout.getLineForOffset(start)
+
+                    val lineStart = layout.getLineStart(line)
+                    val lineEnd = layout.getLineEnd(line)
+
+                    // Apply highlight to the entire line
+                    spannable.setSpan(
+                        BackgroundColorSpan(highlightColor),
+                        lineStart,
+                        lineEnd,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+
+                    tvDescription.text = spannable
+
+                    // Auto-scroll so the highlighted line stays visible
+                    val y = layout.getLineTop(line)
+                    val scrollView = tvDescription.parent.parent as? android.widget.ScrollView
+                    scrollView?.smoothScrollTo(0, y - 100)  // Extra padding above
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    private fun speakOut(text: String) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1")
+
+
+    // ---------------- TTS INITIALIZATION ----------------
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            val result = tts.setLanguage(Locale.US)
+        }
     }
 
     override fun onDestroy() {
