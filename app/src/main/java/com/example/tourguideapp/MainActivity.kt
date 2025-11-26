@@ -1,6 +1,7 @@
 package com.example.tourguideapp
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
@@ -16,6 +17,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import java.io.File
+import java.io.FileOutputStream
 import kotlin.random.Random
 
 class MainActivity : BaseActivity() {
@@ -142,21 +144,34 @@ class MainActivity : BaseActivity() {
         )
     }
 
+    private fun drawableToFile(drawableId: Int): File {
+        val bitmap = BitmapFactory.decodeResource(resources, drawableId)
+        val file = File(cacheDir, "dummy_${drawableId}.jpg")
+
+        val out = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+        out.flush()
+        out.close()
+
+        return file
+    }
+
     private fun simulateUploadPhoto() {
         // Hide camera preview (to make UI cleaner)
         cameraPreview.visibility = View.GONE
         btnTakePhoto.visibility = View.GONE
 
         // Randomly choose between dummy images
-        val dummyImages = listOf(R.drawable.dummy1, R.drawable.dummy2)
+        val dummyImages = listOf(R.drawable.dummy2, R.drawable.dummy3)
         val selectedImage = dummyImages[Random.nextInt(dummyImages.size)]
 
         // Show dummy image as preview
         imgPreview.setImageResource(selectedImage)
+        val dummyFile = drawableToFile(selectedImage)
 
         // Go to reload activity
         val intent = Intent(this, ReloadActivity::class.java)
-        intent.putExtra(EXTRA_PHOTO_PATH, "drawable:$selectedImage")
+        intent.putExtra(EXTRA_PHOTO_PATH, dummyFile.absolutePath)
         startActivity(intent)
     }
 
