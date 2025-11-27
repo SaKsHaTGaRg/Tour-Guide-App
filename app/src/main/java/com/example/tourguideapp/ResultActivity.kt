@@ -112,6 +112,11 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
                 if (story != null) {
                     narrationText = story
                     tvDescription.text = story
+                    saveStoryToDatabase(
+                        landmarkName = landmarkName,
+                        storyText = story,
+                        imagePath = photoPath
+                    )
                 } else {
                     narrationText = "Could not generate story for $landmarkName."
                     tvDescription.text = narrationText
@@ -230,5 +235,19 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
         if (tts.isSpeaking) tts.stop()
         tts.shutdown()
         super.onDestroy()
+    }
+    // Db Creation
+    private fun saveStoryToDatabase(landmarkName: String, storyText: String, imagePath: String?) {
+        val dbHelper = StoryDatabaseHelper(this)
+        val db = dbHelper.writableDatabase
+
+        val values = android.content.ContentValues().apply {
+            put("landmarkName", landmarkName)
+            put("storyText", storyText)
+            put("imagePath", imagePath)
+            put("createdAt", System.currentTimeMillis())
+        }
+
+        db.insert("stories", null, values)
     }
 }
