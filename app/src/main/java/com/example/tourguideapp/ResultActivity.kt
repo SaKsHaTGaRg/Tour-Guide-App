@@ -21,15 +21,17 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
 
     private lateinit var imgCaptured: ImageView
     private lateinit var tvDescription: TextView
-    private lateinit var btnBackToNarration: ImageButton
     private lateinit var btnNarration: ImageButton
+    private lateinit var btnBackToNarration: ImageButton
+
     private lateinit var tts: TextToSpeech
-
     private var isSpeaking = false
-    private var narrationText: String = ""
+    private var narrationText = ""
     private val backend = Backend()
-
     private val handler = Handler(Looper.getMainLooper())
+
+    private var hasRequestedStory = false
+    private var hasSaved = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,90 +39,145 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
 
         imgCaptured = findViewById(R.id.imgCaptured)
         tvDescription = findViewById(R.id.tvDescription)
-        btnBackToNarration = findViewById(R.id.btnBackToNarration)
         btnNarration = findViewById(R.id.btnNarration)
+        btnBackToNarration = findViewById(R.id.btnBackToNarration)
 
         tts = TextToSpeech(this, this)
 
-        // Bottom navigation
-        findViewById<ImageButton>(R.id.btnProfile).setOnClickListener {
-            startActivity(
-                Intent(this, ProfileActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            )
-        }
+        setupBottomNav()
 
-        findViewById<ImageButton>(R.id.btnHome).setOnClickListener {
-            startActivity(
-                Intent(this, MainActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            )
-        }
+        val openedFromHistory = intent.getBooleanExtra("fromHistory", false)
 
-        findViewById<ImageButton>(R.id.btnReload).setOnClickListener {
-            startActivity(
-                Intent(this, HistoryActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            )
-        }
-
-        findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
-            startActivity(
-                Intent(this, SettingsActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            )
-        }
-
-        // Load image
-        val photoPath = intent.getStringExtra("photo_path")
-        val landmarkName = intent.getStringExtra("landmark_name")
-
-        if (photoPath != null) {
-            if (photoPath.startsWith("drawable:")) {
-                val resId = photoPath.substringAfter("drawable:").toInt()
-                imgCaptured.setImageResource(resId)
-            } else {
-                val bitmap = BitmapFactory.decodeFile(photoPath)
-                imgCaptured.setImageBitmap(bitmap)
-            }
-        } else {
-            imgCaptured.setImageResource(R.mipmap.ic_launcher)
-        }
-
-        if (landmarkName == null) {
-            Toast.makeText(this, "No landmark received from backend", Toast.LENGTH_LONG).show()
+        if (openedFromHistory) {
+            loadFromHistory()
+            btnNarration.isEnabled = false
             return
         }
 
-        // Show loading text
-        tvDescription.text = "Generating story for $landmarkName..."
+        loadFromCamera()
+    }
+
+    private fun loadFromHistory() {
+        val story = intent.getStringExtra("storyText")
+        val photoPath = intent.getStringExtra("photo_path")
+
+        narrationText = story ?: ""
+        tvDescription.text = narrationText
+
+        if (!photoPath.isNullOrEmpty()) {
+            BitmapFactory.decodeFile(photoPath)?.let { imgCaptured.setImageBitmap(it) }
+        }
+    }
+
+    private fun loadFromCamera() {
+
+        if (hasRequestedStory) return
+        hasRequestedStory = true
+
+        val photoPath = intent.getStringExtra("photo_path")
+        val landmark = intent.getStringExtra("landmark_name")
+
+        if (photoPath != null) {
+            BitmapFactory.decodeFile(photoPath)?.let { imgCaptured.setImageBitmap(it) }
+        }
+
+        if (landmark == null) {
+            Toast.makeText(this, "No landmark received", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        tvDescription.text = "Generating story for $landmark..."
         narrationText = tvDescription.text.toString()
 
-        // Hardcoded user preferences
-        val userStyle = "folklore"
-        val userTone = "casual"
-        val userLength = "medium"
-
-        // Fetch story from backend
         backend.fetchStoryFromBackend(
-            landmarkName,
-            userStyle,
-            userTone,
-            userLength
+            landmark, "folklore", "casual", "medium"
         ) { story ->
+
             runOnUiThread {
-                if (story != null) {
-                    narrationText = story
-                    tvDescription.text = story
-                } else {
-                    narrationText = "Could not generate story for $landmarkName."
-                    tvDescription.text = narrationText
+                if (story == null) {
+                    tvDescription.text = "Could not generate story."
+                    narrationText = tvDescription.text.toString()
+                    return@runOnUiThread
+                }
+
+                narrationText = story
+                tvDescription.text = story
+
+                if (!hasSaved) {
+                    hasSaved = true
+                    StoryDatabaseHelper(this).saveStoryIfNotExists(
+                        landmarkName = landmark,
+                        storyText = story,
+                        imagePath = photoPath
+                    )
                 }
             }
         }
+    }
 
-        btnBackToNarration.setOnClickListener {
-            tvDescription.scrollTo(0, 0)
+    private fun speakWithHighlight(text: String) {
+        val params = Bundle().apply {
+            putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "tts1")
+        }
+
+        tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+
+            override fun onStart(p0: String?) {}
+
+            override fun onDone(p0: String?) {
+                handler.post {
+                    tvDescription.text = narrationText
+                    isSpeaking = false
+                    btnNarration.setImageResource(R.drawable.ic_play_arrow)
+                }
+            }
+
+            override fun onError(p0: String?) {}
+
+            override fun onRangeStart(id: String?, start: Int, end: Int, frame: Int) {
+                handler.post { highlightLine(start, end) }
+            }
+        })
+
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, params, "tts1")
+    }
+
+    private fun highlightLine(start: Int, end: Int) {
+        try {
+            val spannable = SpannableStringBuilder(narrationText)
+            val highlightColor = ContextCompat.getColor(this, R.color.line_highlight)
+
+            tvDescription.post {
+                val layout = tvDescription.layout ?: return@post
+                val line = layout.getLineForOffset(start)
+                val lineStart = layout.getLineStart(line)
+                val lineEnd = layout.getLineEnd(line)
+
+                spannable.setSpan(
+                    BackgroundColorSpan(highlightColor),
+                    lineStart,
+                    lineEnd,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+
+                tvDescription.text = spannable
+            }
+
+        } catch (_: Exception) {}
+    }
+
+    private fun setupBottomNav() {
+        findViewById<ImageButton>(R.id.btnProfile).setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
+        findViewById<ImageButton>(R.id.btnHome).setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+        findViewById<ImageButton>(R.id.btnReload).setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
+        }
+        findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
 
         btnNarration.setOnClickListener {
@@ -134,95 +191,15 @@ class ResultActivity : BaseActivity(), TextToSpeech.OnInitListener {
                 btnNarration.setImageResource(R.drawable.ic_pause)
             }
         }
-    }
 
-    // ---------------- HIGHLIGHT LOGIC ----------------
-
-    private fun speakWithHighlight(text: String) {
-        val words = text.split(" ")
-        var currentIndex = 0
-
-        tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-
-            override fun onStart(utteranceId: String?) {}
-
-            override fun onDone(utteranceId: String?) {
-                handler.post {
-                    // Clear highlight when done
-                    tvDescription.text = narrationText
-                    isSpeaking = false
-                    btnNarration.setImageResource(R.drawable.ic_play_arrow)
-                }
-            }
-
-            override fun onError(utteranceId: String?) {}
-
-            override fun onRangeStart(
-                utteranceId: String?,
-                start: Int,
-                end: Int,
-                frame: Int
-            ) {
-                handler.post {
-                    highlightLine(start, end)
-                }
-            }
-        })
-
-        val params = Bundle()
-        params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "tts1")
-
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, params, "tts1")
-    }
-
-    private fun highlightLine(start: Int, end: Int) {
-        try {
-            val spannable = SpannableStringBuilder(narrationText)
-
-            val highlightColor = ContextCompat.getColor(this, R.color.line_highlight)
-
-            tvDescription.post {
-                try {
-                    val layout = tvDescription.layout ?: return@post
-
-                    // Find the line that this text range belongs to
-                    val line = layout.getLineForOffset(start)
-
-                    val lineStart = layout.getLineStart(line)
-                    val lineEnd = layout.getLineEnd(line)
-
-                    // Apply highlight to the entire line
-                    spannable.setSpan(
-                        BackgroundColorSpan(highlightColor),
-                        lineStart,
-                        lineEnd,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-
-                    tvDescription.text = spannable
-
-                    // Auto-scroll so the highlighted line stays visible
-                    val y = layout.getLineTop(line)
-                    val scrollView = tvDescription.parent.parent as? android.widget.ScrollView
-                    scrollView?.smoothScrollTo(0, y - 100)  // Extra padding above
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
+        btnBackToNarration.setOnClickListener {
+            tvDescription.scrollTo(0, 0)
         }
     }
 
-
-
-    // ---------------- TTS INITIALIZATION ----------------
-
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            val result = tts.setLanguage(Locale.US)
+            tts.language = Locale.US
         }
     }
 

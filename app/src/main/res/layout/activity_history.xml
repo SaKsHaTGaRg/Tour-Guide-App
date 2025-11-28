@@ -58,6 +58,7 @@
         android:clipToPadding="false">
 
         <LinearLayout
+            android:id="@+id/historyContainer"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -364,6 +365,7 @@
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
     </ScrollView>
 
@@ -424,4 +426,5 @@
             android:contentDescription="Settings"
             android:background="?attr/selectableItemBackgroundBorderless"/>
     </LinearLayout>
+
 </LinearLayout>
