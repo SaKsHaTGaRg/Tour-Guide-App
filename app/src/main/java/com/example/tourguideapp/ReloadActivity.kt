@@ -4,13 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.ImageButton
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 
 class ReloadActivity : BaseActivity() {
 
     private val backend = Backend()
+    private var hasStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,15 +23,16 @@ class ReloadActivity : BaseActivity() {
             finish()
             return
         }
-        analyzeImage(photoPath)
 
-        // Simulate 2-second processing
         Handler(Looper.getMainLooper()).postDelayed({
             analyzeImage(photoPath)
         }, 2000)
     }
 
     private fun analyzeImage(photoPath: String) {
+        // extra guard so dont start ResultActivity twice
+        if (hasStarted) return
+        hasStarted = true
 
         backend.uploadImageToBackend(photoPath) { landmarkName ->
             runOnUiThread {
@@ -41,6 +41,7 @@ class ReloadActivity : BaseActivity() {
                     finish()
                     return@runOnUiThread
                 }
+
                 val intent = Intent(this, ResultActivity::class.java)
                 intent.putExtra("photo_path", photoPath)
                 intent.putExtra("landmark_name", landmarkName)
