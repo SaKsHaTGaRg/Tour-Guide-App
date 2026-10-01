@@ -2,8 +2,6 @@ package com.example.tourguideapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.Toast
 
 class ReloadActivity : BaseActivity() {
@@ -24,9 +22,7 @@ class ReloadActivity : BaseActivity() {
             return
         }
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            analyzeImage(photoPath)
-        }, 2000)
+        analyzeImage(photoPath)
     }
 
     private fun analyzeImage(photoPath: String) {
@@ -36,8 +32,15 @@ class ReloadActivity : BaseActivity() {
 
         backend.uploadImageToBackend(photoPath) { landmarkName ->
             runOnUiThread {
+                if (isFinishing || isDestroyed) return@runOnUiThread
                 if (landmarkName == null) {
-                    Toast.makeText(this, "Backend error", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Could not recognize the photo. Check your connection and try again.", Toast.LENGTH_LONG).show()
+                    finish()
+                    return@runOnUiThread
+                }
+
+                if (landmarkName.equals("Unknown landmark", ignoreCase = true)) {
+                    Toast.makeText(this, "No landmark recognized. Try a clearer photo.", Toast.LENGTH_LONG).show()
                     finish()
                     return@runOnUiThread
                 }
@@ -50,5 +53,10 @@ class ReloadActivity : BaseActivity() {
                 finish()
             }
         }
+    }
+
+    override fun onDestroy() {
+        backend.cancelRequests()
+        super.onDestroy()
     }
 }
