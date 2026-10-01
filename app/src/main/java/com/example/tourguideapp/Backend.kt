@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit
 
 
 class Backend {
+    fun cancelRequests() = client.dispatcher.cancelAll()
+
     private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
@@ -39,7 +41,7 @@ class Backend {
             .build()
 
         val request = Request.Builder()
-            .url("http://10.0.2.2:8000/recognize-landmark") //android alias, change if not running on emulator, otherwise leave like this
+            .url("${BuildConfig.BACKEND_BASE_URL}/recognize-landmark")
             .post(multipartBody)
             .build()
 
@@ -57,13 +59,12 @@ class Backend {
                         return
                     }
 
-                    val body = resp.body?.string()
+                    val body = try { resp.body?.string() } catch (_: IOException) { null }
                     if (body.isNullOrEmpty()) {
                         callback(null)
                         return
                     }
-                    val json = JSONObject(body)
-                    val landmark = json.optString("landmark_name", null)
+                    val landmark = parseText(body, "landmark_name")
                     callback(landmark)
                 }
             }
@@ -89,7 +90,7 @@ class Backend {
         val requestBody = json.toString().toRequestBody(mediaType)
 
         val request = Request.Builder()
-            .url("http://10.0.2.2:8000/generate-story")
+            .url("${BuildConfig.BACKEND_BASE_URL}/generate-story")
             .post(requestBody)
             .build()
 
@@ -106,15 +107,13 @@ class Backend {
                         return
                     }
 
-                    val body = resp.body?.string()
+                    val body = try { resp.body?.string() } catch (_: IOException) { null }
                     if (body.isNullOrEmpty()) {
                         callback(null)
                         return
                     }
 
-                    val jsonResp = JSONObject(body)
-                    // We could also read "summary" if needed
-                    val story = jsonResp.optString("story", null)
+                    val story = parseText(body, "story")
                     callback(story)
                 }
             }
@@ -124,5 +123,10 @@ class Backend {
 
 
 
+    private fun parseText(body: String, field: String): String? = try {
+        (JSONObject(body).opt(field) as? String)?.trim()?.takeIf { it.isNotEmpty() }
+    } catch (_: org.json.JSONException) {
+        null
+    }
 }
 

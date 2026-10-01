@@ -15,7 +15,12 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        buildConfigField("String", "OPENAI_API_KEY", "\"${project.properties["OPENAI_API_KEY"]}\"")
+        val backendUrl = providers.gradleProperty("BACKEND_BASE_URL")
+            .getOrElse("http://10.0.2.2:8000").trimEnd('/')
+        require(backendUrl.matches(Regex("https?://[A-Za-z0-9.\\-:/]+"))) {
+            "BACKEND_BASE_URL must be an http(s) URL without credentials, query, or fragment"
+        }
+        buildConfigField("String", "BACKEND_BASE_URL", "\"$backendUrl\"")
 
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

@@ -8,7 +8,12 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -17,8 +22,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import java.io.File
-import java.io.FileOutputStream
-import kotlin.random.Random
 
 class MainActivity : BaseActivity() {
 
@@ -29,6 +32,46 @@ class MainActivity : BaseActivity() {
 
     private var imageCapture: ImageCapture? = null
     private val CAMERA_PERMISSION_CODE = 101
+    private val selectPhoto = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri == null) return@registerForActivityResult
+        lifecycleScope.launch {
+            btnUploadPhoto.isEnabled = false
+            val photo = withContext(Dispatchers.IO) {
+                // Decode a bounded preview before converting gallery formats to JPEG.
+                val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                try {
+                    contentResolver.openInputStream(uri)?.use {
+                        BitmapFactory.decodeStream(it, null, options)
+                    }
+                    require(options.outWidth > 0 && options.outHeight > 0)
+                    options.inJustDecodeBounds = false
+                    options.inSampleSize = 1
+                    while (maxOf(options.outWidth, options.outHeight) / options.inSampleSize > 2048) {
+                        options.inSampleSize *= 2
+                    }
+                    val bitmap = contentResolver.openInputStream(uri)?.use {
+                        BitmapFactory.decodeStream(it, null, options)
+                    } ?: return@withContext null
+                    try {
+                        val file = File.createTempFile("selected_", ".jpg", cacheDir)
+                        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 85, it) }
+                        file
+                    } finally {
+                        bitmap.recycle()
+                    }
+                } catch (_: Exception) {
+                    null
+                }
+            }
+            btnUploadPhoto.isEnabled = true
+            if (photo == null) {
+                Toast.makeText(this@MainActivity, "Could not open that image. Choose another photo.", Toast.LENGTH_LONG).show()
+            } else {
+                startActivity(Intent(this@MainActivity, ReloadActivity::class.java)
+                    .putExtra(EXTRA_PHOTO_PATH, photo.absolutePath))
+            }
+        }
+    }
 
     companion object {
         const val EXTRA_PHOTO_PATH = "photo_path"
@@ -71,7 +114,7 @@ class MainActivity : BaseActivity() {
         }
 
         btnUploadPhoto.setOnClickListener {
-            simulateUploadPhoto()
+            selectPhoto.launch("image/*")
         }
     }
 
@@ -142,37 +185,6 @@ class MainActivity : BaseActivity() {
                 }
             }
         )
-    }
-
-    private fun drawableToFile(drawableId: Int): File {
-        val bitmap = BitmapFactory.decodeResource(resources, drawableId)
-        val file = File(cacheDir, "dummy_${drawableId}.jpg")
-
-        val out = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
-        out.flush()
-        out.close()
-
-        return file
-    }
-
-    private fun simulateUploadPhoto() {
-        // Hide camera preview (to make UI cleaner)
-        cameraPreview.visibility = View.GONE
-        btnTakePhoto.visibility = View.GONE
-
-        // Randomly choose between dummy images
-        val dummyImages = listOf(R.drawable.dummy2, R.drawable.dummy3)
-        val selectedImage = dummyImages[Random.nextInt(dummyImages.size)]
-
-        // Show dummy image as preview
-        imgPreview.setImageResource(selectedImage)
-        val dummyFile = drawableToFile(selectedImage)
-
-        // Go to reload activity
-        val intent = Intent(this, ReloadActivity::class.java)
-        intent.putExtra(EXTRA_PHOTO_PATH, dummyFile.absolutePath)
-        startActivity(intent)
     }
 
     override fun onResume() {
